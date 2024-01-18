@@ -13,8 +13,9 @@ function App() {
   //subject에 post1,2,3 배열형태로 담는 방법
   let [subject, setSubject] = useState(['리액트 따라하기','JSX란?','React에서 state 쓰는 법'])
 
-  let [cntLike, setLike] = useState(0)
+  let [cntLike, setLike] = useState([0,0,0])
   let [modal, setModal] = useState(0)
+
 
 
   return (
@@ -35,7 +36,7 @@ function App() {
           setSubject(tmp)
         }}>정렬</button>
 
-      <div className="list">
+      {/* <div className="list">
         <h4 onClick={()=>{
           modal == 1? setModal(0) : setModal(1)
           }}> {subject[0]} 
@@ -49,13 +50,40 @@ function App() {
         <h4>{subject[1]}</h4>
         <p>01.19 발행</p>
       </div>
+
       <div className="list">
         <h4>{subject[2]}</h4>
         <p>01.19 발행</p>
       </div>
+       */}
       
       {
-        modal == 1 ? <Modal></Modal> : null
+        //React 반복문 사용하는 방법 - map함수
+        //파라미터(array, 증가변수)
+        subject.map(function(i, idx){
+          return (
+            //key(고유값)에 대한 선언 및 사용 가능. 
+            <div className="list" key={idx}>
+            <h4 onClick={()=>{
+              modal == 1? setModal(0) : setModal(1)
+              }}> {i} 
+              <span onClick={()=>{
+                let tmp = [...cntLike]
+                tmp[idx] = tmp[idx]+1
+                setLike(tmp)
+              }}>👍</span> 
+              {cntLike[idx]}
+              </h4>
+            <p>01.18 발행</p>
+          </div>
+
+          )
+        })
+      }
+
+      {
+        //React if문 사용하는 방법 - 삼항연산
+        modal == 1 ? <Modal  sub1={subject} sub2={cntLike}></Modal> : null
       }
 
     </div>
@@ -63,12 +91,12 @@ function App() {
 }
 
 //Component - 함수 시작은 대문자
-function Modal(){
+function Modal(props){
   return(
     //의미없는 div의 사용대신 <></>사용 가능
     <>
     <div className="modal">
-      <h4>제목</h4>
+      <h4>{props.sub1}  ({props.sub2})</h4>
       <p>날짜</p>
       <p>상세내용</p>
     </div>
