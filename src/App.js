@@ -15,7 +15,8 @@ function App() {
 
   let [cntLike, setLike] = useState([0,0,0])
   let [modal, setModal] = useState(0)
-
+  let [titleIdx, setTitleIdx] = useState(0)
+  let [input1, setInput1] = useState('')
 
 
   return (
@@ -65,14 +66,28 @@ function App() {
             //key(고유값)에 대한 선언 및 사용 가능. 
             <div className="list" key={idx}>
             <h4 onClick={()=>{
-              modal == 1? setModal(0) : setModal(1)
+              modal == 1? setModal(0) : setModal(1);
+              setTitleIdx(idx)              
               }}> {i} 
-              <span onClick={()=>{
+              <span onClick={(e)=>{
+                //상위html로 퍼지는 이벤트 버블링 막음 - 클릭과 같은 것
+                e.stopPropagation();
                 let tmp = [...cntLike]
                 tmp[idx] = tmp[idx]+1
                 setLike(tmp)
               }}>👍</span> 
               {cntLike[idx]}
+              
+              <button onClick={(e)=>{
+                e.stopPropagation()
+                let tmp = [...subject]
+                tmp.splice(idx, 1)
+                setSubject(tmp)
+
+                let tmp2 = [...cntLike]
+                tmp2.splice(idx,1)
+                setLike(tmp2)
+              }}>글삭제</button>
               </h4>
             <p>01.18 발행</p>
           </div>
@@ -80,13 +95,30 @@ function App() {
           )
         })
       }
-
+      
       {
         //React if문 사용하는 방법 - 삼항연산
-        modal == 1 ? <Modal  sub1={subject} sub2={cntLike}></Modal> : null
+        modal == 1 ? <Modal sub={titleIdx} sub1={subject} sub2={cntLike}></Modal> : null
       }
 
+    <input type="text" onChange={(e)=>{
+      setInput1(e.target.value)}}
+    ></input>
+    <button onClick={()=>{
+      let tmp = [...subject]
+      tmp.push(input1);
+      setSubject(tmp)
+
+      let tmp2 = [...cntLike]
+      tmp2.push(0)
+      setLike(tmp2)
+    }
+      }>글추가</button>
+
     </div>
+
+
+
   );
 }
 
@@ -96,9 +128,10 @@ function Modal(props){
     //의미없는 div의 사용대신 <></>사용 가능
     <>
     <div className="modal">
-      <h4>{props.sub1}  ({props.sub2})</h4>
+      <h4>{props.sub1[props.sub]}  ({props.sub2[props.sub]})</h4>
       <p>날짜</p>
       <p>상세내용</p>
+      <button>글수정</button>
     </div>
     <div></div>
     </>
